@@ -7,14 +7,13 @@ layout: en
 A common way to customize the build process is to define environment variables, which can be accessed from any stage in your build process.
 
 
-
 The best way to define an environment variable depends on what type of information it will contain, and when you need to change it:
 
-- if it does *not* contain sensitive information, might be different for different branches and should be available to forks -- [add it to your .travis.yml](#defining-public-variables-in-travisyml)
-- if it *does* contain sensitive information, and might be different for different branches -- [encrypt it and add it to your .travis.yml](#defining-encrypted-variables-in-travisyml)
-- if it *does* contain sensitive information, but is the same for all branches -- [add it to your Repository Settings](#defining-variables-in-repository-settings)
+- if it does *not* contain sensitive information and should be available to forks -- [add it to your .travis.yml](#defining-public-variables-in-travisyml)
+- if it *does* contain sensitive information, and is the same for all branches -- [encrypt it and add it to your .travis.yml](#defining-encrypted-variables-in-travisyml)
+- if it *does* contain sensitive information, and might be different for different branches -- [add it to your Repository Settings](#defining-variables-in-repository-settings)
 
-## Defining public variables in .travis.yml
+## Defining Public Variables in .travis.yml
 
 Public variables defined in `.travis.yml` are tied to a certain commit. Changing them requires a new commit, restarting an old build uses the old values. They are also available automatically on forks of the repository.
 
@@ -67,7 +66,7 @@ env:
   global:
     - CAMPFIRE_TOKEN=abc123
     - TIMEOUT=1000
-  matrix:
+  jobs:
     - USE_NETWORK=true
     - USE_NETWORK=false
 ```
@@ -92,7 +91,7 @@ A `.travis.yml` file containing encrypted variables looks like this:
 env:
   global:
     - secure: mcUCykGm4bUZ3CaW6AxrIMFzuAYjA98VIz6YmYTmM0/8sp/B/54JtQS/j0ehCD6B5BwyW6diVcaQA2c7bovI23GyeTT+TgfkuKRkzDcoY51ZsMDdsflJ94zV7TEIS31eCeq42IBYdHZeVZp/L7EXOzFjVmvYhboJiwnsPybpCfpIH369fjYKuVmutccD890nP8Bzg8iegssVldgsqDagkuLy0wObAVH0FKnqiIPtFoMf3mDeVmK2AkF1Xri1edsPl4wDIu1Ko3RCRgfr6NxzuNSh6f4Z6zmJLB4ONkpb3fAa9Lt+VjJjdSjCBT1OGhJdP7NlO5vSnS5TCYvgFqNSXqqJx9BNzZ9/esszP7DJBe1yq1aNwAvJ7DlSzh5rvLyXR4VWHXRIR3hOWDTRwCsJQJctCLpbDAFJupuZDcvqvPNj8dY5MSCu6NroXMMFmxJHIt3Hdzr+hV9RNJkQRR4K5bR+ewbJ/6h9rjX6Ot6kIsjJkmEwx1jllxi4+gSRtNQ/O4NCi3fvHmpG2pCr7Jz0+eNL2d9wm4ZxX1s18ZSAZ5XcVJdx8zL4vjSnwAQoFXzmx0LcpK6knEgw/hsTFovSpe5p3oLcERfSd7GmPm84Qr8U4YFKXpeQlb9k5BK9MaQVqI4LyaM2h4Xx+wc0QlEQlUOfwD4B2XrAYXFIq1PAEic=
-  matrix:
+  jobs:
     - USE_NETWORK=true
     - USE_NETWORK=false
     - secure: <you can also put encrypted vars inside matrix>
@@ -109,11 +108,14 @@ Encrypt environment variables with the public key attached to your repository us
 
 1. If you do not have the `travis` gem installed, run `gem install travis`.
 
-2. In your repository directory, run:
+2. In your repository directory:
 
-   ```bash
-   travis encrypt MY_SECRET_ENV=super_secret --add env.matrix
-   ```
+   * If you are using https://travis-ci.com, see [Encryption keys -- Usage](https://docs.travis-ci.com/user/encryption-keys#usage).
+   * If you are using https://travis-ci.org, run:
+
+       ```bash
+       travis encrypt MY_SECRET_ENV=super_secret --add env.global
+       ```
 
 3. Commit the changes to your `.travis.yml`.
 
@@ -125,10 +127,10 @@ The encryption scheme is explained in more detail in [Encryption keys](/user/enc
 
 {{ site.data.snippets.environment_variables }}
 
-To define variables in Repository Settings, make sure you're logged in, navigate to the repository in question, choose "Settings" from the cog menu, and click on "Add new variable" in the "Environment Variables" section.
+To define variables in Repository Settings, make sure you're logged in, navigate to the repository in question, choose "Settings" from the "More options" menu, and click on "Add new variable" in the "Environment Variables" section. Restrict the environment variable to a specific branch by selecting which branch it should be available to.
 
 <figure>
-  <img alt="Screenshot of environment variables in settings" src="{{ "/images/settings-env-vars.png" | prepend: site.baseurl }}">
+  <img alt="Screenshot of environment variables in settings" src="{{ "/images/2019-07-settings-env-vars.png" | prepend: site.baseurl }}">
   <figcaption>Environment Variables in the Repository Settings</figcaption>
 </figure>
 
